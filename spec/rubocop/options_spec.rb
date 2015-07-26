@@ -81,6 +81,7 @@ Usage: rubocop [options] [file1, file2, ...]
     -D, --display-cop-names          Display cop names in offense messages.
     -S, --display-style-guide        Display style guide URLs in offense messages.
     -R, --rails                      Run extra Rails cops.
+    -b, --branch-diff TARGET_BRANCH  Run only for touched files.
     -l, --lint                       Run only lint cops.
     -a, --auto-correct               Auto-correct offenses.
     -n, --no-color                   Disable color output.
@@ -203,6 +204,13 @@ Usage: rubocop [options] [file1, file2, ...]
       it 'fails if given without --auto-gen-config' do
         expect { options.parse %w(--exclude-limit 10) }
           .to raise_error(ArgumentError)
+      end
+    end
+
+    describe '--branch-diff' do
+      it 'fails if given alone without argument' do
+        expect { options.parse %w(--branch-diff) }
+          .to raise_error(OptionParser::MissingArgument)
       end
     end
   end

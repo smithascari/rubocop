@@ -26,8 +26,11 @@ module RuboCop
     # Generate a list of target files by expanding globbing patterns
     # (if any). If args is empty, recursively find all Ruby source
     # files under the current directory
+    # Generate a files list based on git branch diff when this option
+    # is passed.
     # @return [Array] array of file paths
     def find(args)
+      return touched_files_on_branch if @options[:branch_diff]
       return target_files_in_dir if args.empty?
 
       files = []
@@ -74,10 +77,13 @@ module RuboCop
     def to_inspect?(file, hidden_files, base_dir_config)
       return false if base_dir_config.file_to_exclude?(file)
       unless hidden_files.include?(file)
-        return true if File.extname(file) == '.rb'
-        return true if ruby_executable?(file)
+        return true if ruby_file?(file)
       end
       base_dir_config.file_to_include?(file)
+    end
+
+    def ruby_file?(file)
+      File.extname(file) == '.rb' || ruby_executable?(file)
     end
 
     # Search for files recursively starting at the given base directory using
@@ -138,6 +144,14 @@ module RuboCop
         config = @config_store.for(file)
         config.file_to_exclude?(file)
       end
+    end
+
+    # Search all files touched between the current branch and the target branch
+    # passed on :branch_diff option. It will check only for files that were:
+    # A=Added; C=Copied; M=Modified; R=Renamed.
+    def touched_files_on_branch
+      files = `git diff --diff-filter=ACMR --name-only #{@options[:branch_diff]}`
+      files.split("\n").select { |file| ruby_file?(file) }
     end
   end
 end

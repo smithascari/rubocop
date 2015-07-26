@@ -125,6 +125,7 @@ module RuboCop
       option(opts, '-D', '--display-cop-names')
       option(opts, '-S', '--display-style-guide')
       option(opts, '-R', '--rails')
+      option(opts, '-b', '--branch-diff TARGET_BRANCH')
       option(opts, '-l', '--lint')
       option(opts, '-a', '--auto-correct')
 
@@ -226,6 +227,7 @@ module RuboCop
       display_cop_names:    'Display cop names in offense messages.',
       display_style_guide:  'Display style guide URLs in offense messages.',
       rails:                'Run extra Rails cops.',
+      branch_diff:          'Run only for touched files.',
       lint:                 'Run only lint cops.',
       auto_correct:         'Auto-correct offenses.',
       no_color:             'Disable color output.',
